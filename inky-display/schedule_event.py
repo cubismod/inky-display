@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from pydantic import BaseModel
 
@@ -12,3 +13,4 @@ class ScheduleEvent(BaseModel):
     stop: str
     id: str
     transit_time_min: int
+    time_til: Optional[str] = None

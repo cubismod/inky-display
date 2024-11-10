@@ -1,14 +1,19 @@
 import logging
+import time
 from datetime import datetime, timedelta
 from os import environ
 
+from draw import generate_image
 from inky.auto import auto
+from PIL import Image
 from redis.backoff import ExponentialBackoff
 from redis.client import Redis
 from redis.exceptions import BusyLoadingError, ConnectionError, TimeoutError
 from redis.retry import Retry
 from schedule_event import ScheduleEvent
 from sortedcontainers import SortedDict
+
+from fonts import FontContainer
 
 logging.basicConfig(format="%(levelname)-8s %(message)s")
 
@@ -52,19 +57,31 @@ def __main__():
     )
 
     departures = SortedDict[str, ScheduleEvent]
+    fonts = FontContainer()
+    fonts.load()
+    sleep_sec = 45
 
     while True:
         json_events = get_redis_items(r)
         for event in json_events:
             if event:
                 schedule_event = ScheduleEvent.model_validate_json(event, strict=False)
-                # factor in time to leave with departure
-                departure = schedule_event.time - timedelta(
+                time_to_leave = schedule_event.time - timedelta(
                     minutes=schedule_event.travel_time_min
                 )
-                departures[str(departure.timestamp())] = schedule_event
+                departures[str(time_to_leave.timestamp())] = schedule_event
 
         selected = select_events(departures)
+        if len(ScheduleEvent) > 0:
+            with Image.open("./backdrop.png").convert("RGBA") as base:
+                img = generate_image(base, selected, fonts)
+                display.set_image(img)
+                display.show()
+            sleep_sec = 45
+        else:
+            sleep_sec = 600
+
+        time.sleep(sleep_sec)
 
 
 __main__()
