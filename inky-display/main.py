@@ -63,6 +63,7 @@ def __main__():
 
     fonts = FontContainer()
     sleep_sec = 45
+    show_sleepy = False
 
     while True:
         json_events = get_redis_items(r)
@@ -93,6 +94,16 @@ def __main__():
                 logger.error("unable to load backdrop image", exc_info=err)
             sleep_sec = randint(60, 300)
         else:
+            if not show_sleepy:
+                show_sleepy = True
+                try:
+                    with Image.open("./mbta_eepy.png").convert("RGBA") as img:
+                        display.set_image(img)
+                        display.show()
+                except (
+                    FileNotFoundError | UnidentifiedImageError | ValueError | TypeError
+                ) as err:
+                    logger.error("unable to load backdrop image", exc_info=err)
             sleep_sec = 600
 
         time.sleep(sleep_sec)
