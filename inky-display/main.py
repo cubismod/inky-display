@@ -83,6 +83,7 @@ def __main__():
 
         selected = select_events(departures)
         if len(selected) > 0:
+            show_sleepy = False
             try:
                 with Image.open("./backdrop.png").convert("RGBA") as base:
                     img = generate_image(base, selected, fonts)
