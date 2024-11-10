@@ -1,0 +1,17 @@
+version: '3'
+
+dotenv: ['.env']
+
+tasks:
+  check:
+    cmds:
+      - ruff check inky-display
+  fix:
+    cmds:
+      - ruff check --fix inky-display
+  format:
+    cmds:
+      - ruff format inky-display
+  run:
+    cmds:
+      - python3 inky-display/main.py

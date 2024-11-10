@@ -1,37 +1,41 @@
 import logging
-from inky import YELLOW
-from inky.auto import auto
-from PIL import Image, ImageDraw
-from os import environ
 from datetime import datetime, timedelta
+from os import environ
+
+from inky.auto import auto
 from redis.backoff import ExponentialBackoff
-from sortedcontainers import SortedDict
+from redis.client import Redis
+from redis.exceptions import BusyLoadingError, ConnectionError, TimeoutError
 from redis.retry import Retry
 from schedule_event import ScheduleEvent
-from redis.client import Redis
-from redis.exceptions import (
-   BusyLoadingError,
-   ConnectionError,
-   TimeoutError
-)
+from sortedcontainers import SortedDict
 
-logging.basicConfig(
-    format="%(levelname)-8s %(message)s"
-)
+logging.basicConfig(format="%(levelname)-8s %(message)s")
 
 logger = logging.getLogger(__name__)
 
 
 def get_redis_items(redis: Redis):
-   til = str((datetime.now() + timedelta.min(60)).timestamp())
+    til = str((datetime.now() + timedelta(hours=1).timestamp()))
 
-   items = redis.zrange('time', str(datetime.now().timestamp()), til, byscore=True, withscores=False)
+    items = redis.zrange(
+        "time", str(datetime.now().timestamp()), til, byscore=True, withscores=False
+    )
 
-   pipeline = redis.pipeline()
-   [pipeline.get(item) for item in items]
+    pipeline = redis.pipeline()
+    [pipeline.get(item) for item in items]
 
-   return pipeline.execute(raise_on_error=False)
+    return pipeline.execute(raise_on_error=False)
 
+
+def select_events(departures: SortedDict[str, ScheduleEvent]):
+    now = str(datetime.now().timestamp())
+    ret = list[ScheduleEvent]
+    for element in departures.irange(minimum=now):
+        ret.append(element)
+        if len(ret) > 3:
+            break
+    return ret
 
 
 def __main__():
@@ -44,23 +48,23 @@ def __main__():
         password=environ.get("REDIS_PASS"),
         retry=retry,
         retry_on_timeout=True,
-        retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError]
+        retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError],
     )
 
     departures = SortedDict[str, ScheduleEvent]
-    
+
     while True:
         json_events = get_redis_items(r)
         for event in json_events:
             if event:
                 schedule_event = ScheduleEvent.model_validate_json(event, strict=False)
-                # factor in travel time to the departure
-                departure = 
-                departures[str(schedule_event.time.timestamp())] = schedule_event
+                # factor in time to leave with departure
+                departure = schedule_event.time - timedelta(
+                    minutes=schedule_event.travel_time_min
+                )
+                departures[str(departure.timestamp())] = schedule_event
 
-
-
-        
+        selected = select_events(departures)
 
 
 __main__()
