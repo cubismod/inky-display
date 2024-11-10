@@ -53,13 +53,13 @@ def truncate_text(schedule_event: ScheduleEvent):
     schedule_event.headsign = schedule_event.headsign[:17]
     schedule_event.stop = schedule_event.stop[:17]
     schedule_event.time_til = (
-        f"{round((schedule_event.time.timestamp() - datetime.now().timestamp()) / 60)}"
+        f"{round((schedule_event.time.timestamp() - datetime.now().timestamp()) / 60)}m"
     )
 
 
 def add_text(
     layer: ImageDraw,
-    pos: tuple[int, int],
+    pos: tuple[float, float],
     style: str,
     size: float,
     fonts: FontContainer,
@@ -82,21 +82,23 @@ def generate_image(image: Image, events: list[ScheduleEvent], fonts: FontContain
 
     i = 0
     for event in events:
+        truncate_text(event)
         j = 0
         for text in base_font_info:
             offset = y_offsets[i]
             x = base_font_info[j]["pos"][0]
             y = base_font_info[j]["pos"][1] + offset
-            body = event[properties[j]]
+            prop = properties[j]
+            body = event.dict()[prop]
             add_text(
                 txt_layer,
                 (x, y),
-                base_font_info[j].style,
-                base_font_info[j].size,
+                base_font_info[j]["style"],
+                base_font_info[j]["size"],
                 fonts,
-                base_font_info[j].color,
+                base_font_info[j]["color"],
                 body,
-                base_font_info[j].anchor,
+                base_font_info[j]["anchor"],
             )
             j += 1
         i += 1

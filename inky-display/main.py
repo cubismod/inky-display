@@ -5,7 +5,8 @@ from os import environ
 
 from draw import generate_image
 from inky.auto import auto
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
+from pydantic import ValidationError
 from redis.backoff import ExponentialBackoff
 from redis.client import Redis
 from redis.exceptions import BusyLoadingError, ConnectionError, TimeoutError
@@ -21,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_redis_items(redis: Redis):
-    til = str((datetime.now() + timedelta(hours=1).timestamp()))
+    til = str((datetime.now() + timedelta(hours=1)).timestamp())
 
     items = redis.zrange(
         "time", str(datetime.now().timestamp()), til, byscore=True, withscores=False
@@ -33,12 +34,12 @@ def get_redis_items(redis: Redis):
     return pipeline.execute(raise_on_error=False)
 
 
-def select_events(departures: SortedDict[str, ScheduleEvent]):
+def select_events(departures: SortedDict[ScheduleEvent]):
     now = str(datetime.now().timestamp())
-    ret = list[ScheduleEvent]
-    for element in departures.irange(minimum=now):
-        ret.append(element)
-        if len(ret) > 3:
+    ret = list[ScheduleEvent]()
+    for k in departures.irange(minimum=now):
+        ret.append(departures[k])
+        if len(ret) > 2:
             break
     return ret
 
@@ -56,27 +57,36 @@ def __main__():
         retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError],
     )
 
-    departures = SortedDict[str, ScheduleEvent]
+    departures = SortedDict[ScheduleEvent]()
     fonts = FontContainer()
-    fonts.load()
     sleep_sec = 45
 
     while True:
         json_events = get_redis_items(r)
         for event in json_events:
             if event:
-                schedule_event = ScheduleEvent.model_validate_json(event, strict=False)
-                time_to_leave = schedule_event.time - timedelta(
-                    minutes=schedule_event.travel_time_min
-                )
-                departures[str(time_to_leave.timestamp())] = schedule_event
+                try:
+                    schedule_event = ScheduleEvent.model_validate_json(
+                        event, strict=False
+                    )
+                    time_to_leave = schedule_event.time - timedelta(
+                        minutes=schedule_event.transit_time_min
+                    )
+                    departures[str(time_to_leave.timestamp())] = schedule_event
+                except ValidationError as err:
+                    logger.error("unable to load json_event", exc_info=err)
 
         selected = select_events(departures)
-        if len(ScheduleEvent) > 0:
-            with Image.open("./backdrop.png").convert("RGBA") as base:
-                img = generate_image(base, selected, fonts)
-                display.set_image(img)
-                display.show()
+        if len(selected) > 0:
+            try:
+                with Image.open("./backdrop.png").convert("RGBA") as base:
+                    img = generate_image(base, selected, fonts)
+                    display.set_image(img)
+                    display.show()
+            except (
+                FileNotFoundError | UnidentifiedImageError | ValueError | TypeError
+            ) as err:
+                logger.error("unable to load backdrop image", exc_info=err)
             sleep_sec = 45
         else:
             sleep_sec = 600
