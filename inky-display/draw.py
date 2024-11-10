@@ -22,19 +22,19 @@ from fonts import FontContainer
 # 61, 269   bold, 20
 
 base_font_info = [
-    {"pos": (29, 33), "style": "Bold", "size": 18, "color": "black", "anchor": "ms"},
+    {"pos": (26, 23), "style": "Bold", "size": 20, "color": "black", "anchor": "mm"},
     {
-        "pos": (29, 79),
-        "style": "SemiBold",
-        "size": 16,
+        "pos": (30, 68),
+        "style": "Bold",
+        "size": 20,
         "color": "yellow",
-        "anchor": "ms",
+        "anchor": "mm",
     },
-    {"pos": (61, 79), "style": "Bold", "size": 20, "color": "black", "anchor": "ls"},
-    {"pos": (61, 33), "style": "Bold", "size": 20, "color": "black", "anchor": "ls"},
+    {"pos": (223, 79), "style": "Medium", "size": 24, "color": "black", "anchor": "ms"},
+    {"pos": (223, 33), "style": "Medium", "size": 24, "color": "black", "anchor": "ms"},
 ]
 y_offsets = [0, 102, 206]
-properties = ["route_id", "headsign", "time_til", "stop"]
+properties = ["route_id", "time_til", "stop", "headsign"]
 
 
 def truncate_text(schedule_event: ScheduleEvent):
@@ -50,8 +50,8 @@ def truncate_text(schedule_event: ScheduleEvent):
     if schedule_event.route_id.startswith("CR"):
         schedule_event.route_id = "CR"
     schedule_event.route_id = schedule_event.route_id[:2]
-    schedule_event.headsign = schedule_event.headsign[:17]
-    schedule_event.stop = schedule_event.stop[:17]
+    schedule_event.headsign = schedule_event.headsign[:24]
+    schedule_event.stop = schedule_event.stop[:24]
     schedule_event.time_til = (
         f"{round((schedule_event.time.timestamp() - datetime.now().timestamp()) / 60)}m"
     )
@@ -70,7 +70,7 @@ def add_text(
     layer.text(
         xy=pos,
         font=fonts.retrieve(style=style, size=size),
-        stroke_fill=ImageColor.getrgb(color),
+        fill=ImageColor.getrgb(color),
         text=text,
         anchor=anchor,
     )

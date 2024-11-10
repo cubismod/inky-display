@@ -13,6 +13,7 @@ from redis.exceptions import BusyLoadingError, ConnectionError, TimeoutError
 from redis.retry import Retry
 from schedule_event import ScheduleEvent
 from sortedcontainers import SortedDict
+from random import randint
 
 from fonts import FontContainer
 
@@ -37,8 +38,11 @@ def get_redis_items(redis: Redis):
 def select_events(departures: SortedDict[ScheduleEvent]):
     now = str(datetime.now().timestamp())
     ret = list[ScheduleEvent]()
+    routes = list[str]()
     for k in departures.irange(minimum=now):
-        ret.append(departures[k])
+        if departures[k].route_id not in routes:
+            ret.append(departures[k])
+            routes.append(departures[k].route_id)
         if len(ret) > 2:
             break
     return ret
@@ -57,12 +61,12 @@ def __main__():
         retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError],
     )
 
-    departures = SortedDict[ScheduleEvent]()
     fonts = FontContainer()
     sleep_sec = 45
 
     while True:
         json_events = get_redis_items(r)
+        departures = SortedDict[ScheduleEvent]()
         for event in json_events:
             if event:
                 try:
@@ -87,7 +91,7 @@ def __main__():
                 FileNotFoundError | UnidentifiedImageError | ValueError | TypeError
             ) as err:
                 logger.error("unable to load backdrop image", exc_info=err)
-            sleep_sec = 45
+            sleep_sec = randint(60, 300)
         else:
             sleep_sec = 600
 
