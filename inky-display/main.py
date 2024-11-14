@@ -2,6 +2,7 @@ import logging
 import time
 from datetime import datetime, timedelta
 from os import environ
+from random import randint
 
 from draw import generate_image
 from inky.auto import auto
@@ -13,7 +14,6 @@ from redis.exceptions import BusyLoadingError, ConnectionError, TimeoutError
 from redis.retry import Retry
 from schedule_event import ScheduleEvent
 from sortedcontainers import SortedDict
-from random import randint
 
 from fonts import FontContainer
 

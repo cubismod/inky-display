@@ -43,13 +43,13 @@ def truncate_text(schedule_event: ScheduleEvent):
             schedule_event.route_id = "RL"
         case "Orange":
             schedule_event.route_id = "OL"
-        case "Green":
-            schedule_event.route_id = "GL"
         case "Blue":
             schedule_event.route_id = "BL"
     if schedule_event.route_id.startswith("CR"):
         schedule_event.route_id = "CR"
-    schedule_event.route_id = schedule_event.route_id[:2]
+    if schedule_event.route_id.startswith("Green"):
+        schedule_event.route_id = "GL"
+    schedule_event.route_id = schedule_event.route_id[:3]
     schedule_event.headsign = schedule_event.headsign[:24]
     schedule_event.stop = schedule_event.stop[:24]
     schedule_event.time_til = (
@@ -84,12 +84,12 @@ def generate_image(image: Image, events: list[ScheduleEvent], fonts: FontContain
     for event in events:
         truncate_text(event)
         j = 0
-        for text in base_font_info:
+        for _ in base_font_info:
             offset = y_offsets[i]
             x = base_font_info[j]["pos"][0]
             y = base_font_info[j]["pos"][1] + offset
             prop = properties[j]
-            body = event.dict()[prop]
+            body = event.model_dump()[prop]
             add_text(
                 txt_layer,
                 (x, y),
