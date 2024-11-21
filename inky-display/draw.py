@@ -40,7 +40,7 @@ properties = ["route_id", "time_til", "stop", "headsign"]
 def create_font(style: str, size: float, icon: bool = False):
     try:
         if icon:
-            return ImageFont.truetype("./fonts/MaterialSymbolsSharp.ttf")
+            return ImageFont.truetype("./fonts/MaterialSymbolsSharp.ttf", size)
         else:
             return ImageFont.truetype(f"./fonts/IBMPlexSans-{style}.ttf", size)
     except OSError as err:
@@ -106,14 +106,14 @@ def generate_image(image: Image, events: list[ScheduleEvent]):
 
     for i, event in enumerate(events):
         truncate_text(event)
-        icon_x = 69
-        icon_y = 22 + y_offsets[i]
+        icon_x = 75
+        icon_y = 25 + y_offsets[i]
         add_text(
             txt_layer,
             (icon_x, icon_y),
             "bold",
             22,
-            create_font(style="bold", size="22", icon=True),
+            create_font(style="thin", size=34, icon=True),
             "yellow",
             get_icon(event),
             "mm",
