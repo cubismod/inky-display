@@ -15,8 +15,6 @@ from redis.retry import Retry
 from schedule_event import ScheduleEvent
 from sortedcontainers import SortedDict
 
-from fonts import FontContainer
-
 logging.basicConfig(format="%(levelname)-8s %(message)s")
 
 logger = logging.getLogger(__name__)
@@ -61,7 +59,6 @@ def __main__():
         retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError],
     )
 
-    fonts = FontContainer()
     sleep_sec = 45
     show_sleepy = False
 
@@ -86,7 +83,7 @@ def __main__():
             show_sleepy = False
             try:
                 with Image.open("./backdrop.png").convert("RGBA") as base:
-                    img = generate_image(base, selected, fonts)
+                    img = generate_image(base, selected)
                     display.set_image(img)
                     display.show()
             except (

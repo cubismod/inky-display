@@ -1,10 +1,10 @@
+import logging
 from datetime import datetime
 
-from PIL import Image, ImageColor, ImageDraw
+from PIL import Image, ImageColor, ImageDraw, ImageFont
 from schedule_event import ScheduleEvent
 
-from fonts import FontContainer
-
+logger = logging.getLogger("draw")
 # offsets & fonts
 # 6, 14     bold, 18
 # 61, 14    bold, 20
@@ -37,6 +37,17 @@ y_offsets = [0, 102, 206]
 properties = ["route_id", "time_til", "stop", "headsign"]
 
 
+def create_font(style: str, size: float, icon: bool = False):
+    try:
+        if icon:
+            return ImageFont.truetype("./fonts/MaterialSymbolsSharp.ttf")
+        else:
+            return ImageFont.truetype(f"./fonts/IBMPlexSans-{style}.ttf", size)
+    except OSError as err:
+        logger.error("unable to load font", exc_info=err)
+        return None
+
+
 def truncate_text(schedule_event: ScheduleEvent):
     match schedule_event.route_id:
         case "Red":
@@ -52,9 +63,8 @@ def truncate_text(schedule_event: ScheduleEvent):
     schedule_event.route_id = schedule_event.route_id[:3]
     schedule_event.headsign = schedule_event.headsign[:24]
     schedule_event.stop = schedule_event.stop[:24]
-    schedule_event.time_til = (
-        f"{round((schedule_event.time.timestamp() - datetime.now().timestamp()) / 60)}m"
-    )
+    # subtract a minute since it will take close to that for the display to draw
+    schedule_event.time_til = f"{round((schedule_event.time.timestamp() - datetime.now().timestamp()) / 60) - 1}m"
 
 
 def add_text(
@@ -62,45 +72,69 @@ def add_text(
     pos: tuple[float, float],
     style: str,
     size: float,
-    fonts: FontContainer,
+    font: ImageFont,
     color: str,
     text: str,
     anchor: str = "la",
 ):
     layer.text(
         xy=pos,
-        font=fonts.retrieve(style=style, size=size),
+        font=font,
         fill=ImageColor.getrgb(color),
         text=text,
         anchor=anchor,
     )
 
 
-def generate_image(image: Image, events: list[ScheduleEvent], fonts: FontContainer):
+def get_icon(event: ScheduleEvent):
+    match event.route_type:
+        case 0:
+            return "tram"
+        case 1:
+            return "subway"
+        case 2:
+            return "train"
+        case 3:
+            return "directions_bus"
+        case 4:
+            return "directions_boat"
+
+
+def generate_image(image: Image, events: list[ScheduleEvent]):
     txt = Image.new("RGBA", image.size, (255, 255, 255, 0))
     txt_layer = ImageDraw.Draw(txt)
 
-    i = 0
-    for event in events:
+    for i, event in enumerate(events):
         truncate_text(event)
-        j = 0
-        for _ in base_font_info:
+        icon_x = 69
+        icon_y = 22 + y_offsets[i]
+        add_text(
+            txt_layer,
+            (icon_x, icon_y),
+            "bold",
+            22,
+            create_font(style="bold", size="22", icon=True),
+            "yellow",
+            get_icon(event),
+            "mm",
+        )
+        for j, _ in enumerate(base_font_info):
             offset = y_offsets[i]
             x = base_font_info[j]["pos"][0]
             y = base_font_info[j]["pos"][1] + offset
+            style = base_font_info[j]["style"]
+            size = base_font_info[j]["size"]
             prop = properties[j]
             body = event.model_dump()[prop]
             add_text(
                 txt_layer,
                 (x, y),
-                base_font_info[j]["style"],
-                base_font_info[j]["size"],
-                fonts,
+                style,
+                size,
+                create_font(style=style, size=size),
                 base_font_info[j]["color"],
                 body,
                 base_font_info[j]["anchor"],
             )
-            j += 1
-        i += 1
 
     return Image.alpha_composite(image, txt)
