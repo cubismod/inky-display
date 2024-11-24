@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Task
-        uses: illbjorn/setup-taskfile@main
+        uses: illbjorn/setup-task@main
 
       - name: Invoke Task
         shell: bash
