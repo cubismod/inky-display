@@ -11,9 +11,9 @@ jobs:
     name: check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@master
       - name: Setup Task
         uses: illbjorn/setup-task@main
+      - uses: actions/checkout@master
       - name: Invoke Task
         shell: bash
         run: task check
