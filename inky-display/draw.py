@@ -106,18 +106,33 @@ def generate_image(image: Image, events: list[ScheduleEvent]):
 
     for i, event in enumerate(events):
         truncate_text(event)
-        icon_x = 75
-        icon_y = 25 + y_offsets[i]
+        vehicle_icon_x = 75
+        vehicle_icon_y = 25 + y_offsets[i]
         add_text(
             txt_layer,
-            (icon_x, icon_y),
+            (vehicle_icon_x, vehicle_icon_y),
             "bold",
-            22,
+            34,
             create_font(style="thin", size=34, icon=True),
             "yellow",
             get_icon(event),
             "mm",
         )
+        if event.id.startswith("prediction"):
+            live_icon_x = 380
+            live_icon_y = 24 + y_offsets[i]
+
+            add_text(
+                txt_layer,
+                (live_icon_x, live_icon_y),
+                "bold",
+                34,
+                create_font(style="thin", size=34, icon=True),
+                "yellow",
+                "rss_feed",
+                "mm",
+            )
+
         for j, _ in enumerate(base_font_info):
             offset = y_offsets[i]
             x = base_font_info[j]["pos"][0]
