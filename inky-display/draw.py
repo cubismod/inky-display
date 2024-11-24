@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+from datetime import UTC, datetime
 
 from PIL import Image, ImageColor, ImageDraw, ImageFont
 from schedule_event import ScheduleEvent
@@ -64,7 +64,7 @@ def truncate_text(schedule_event: ScheduleEvent):
     schedule_event.headsign = schedule_event.headsign[:24]
     schedule_event.stop = schedule_event.stop[:24]
     # subtract a minute since it will take close to that for the display to draw
-    schedule_event.time_til = f"{round((schedule_event.time.timestamp() - datetime.now().timestamp()) / 60) - 1}m"
+    schedule_event.time_til = f"{round((schedule_event.time.timestamp() - datetime.now().astimezone(UTC).timestamp()) / 60) - 1}m"
 
 
 def add_text(

@@ -1,6 +1,6 @@
 import logging
 import time
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from os import environ
 from random import randint
 
@@ -21,10 +21,14 @@ logger = logging.getLogger(__name__)
 
 
 def get_redis_items(redis: Redis):
-    til = str((datetime.now() + timedelta(hours=1)).timestamp())
+    til = str((datetime.now().astimezone(UTC) + timedelta(hours=1)).timestamp())
 
     items = redis.zrange(
-        "time", str(datetime.now().timestamp()), til, byscore=True, withscores=False
+        "time",
+        str(datetime.now().astimezone(UTC).timestamp()),
+        til,
+        byscore=True,
+        withscores=False,
     )
 
     pipeline = redis.pipeline()
@@ -34,7 +38,7 @@ def get_redis_items(redis: Redis):
 
 
 def select_events(departures: SortedDict[ScheduleEvent]):
-    now = str(datetime.now().timestamp())
+    now = str(datetime.now().astimezone(UTC).timestamp())
     ret = list[ScheduleEvent]()
     routes = list[str]()
     for k in departures.irange(minimum=now):
