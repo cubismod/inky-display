@@ -1,0 +1,19 @@
+name: check
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+
+jobs:
+  demo:
+    name: check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Task
+        uses: illbjorn/setup-taskfile@main
+
+      - name: Invoke Task
+        shell: bash
+        run: task check
