@@ -21,12 +21,12 @@ logger = logging.getLogger(__name__)
 
 
 def get_redis_items(redis: Redis):
-    til = str((datetime.now().astimezone(UTC) + timedelta(hours=1)).timestamp())
+    til = (datetime.now().astimezone(UTC) + timedelta(hours=1)).timestamp()
 
     items = redis.zrange(
         "time",
-        str(datetime.now().astimezone(UTC).timestamp()),
-        til,
+        start=int(datetime.now().astimezone(UTC).timestamp()),
+        end=int(til),
         byscore=True,
         withscores=False,
     )
