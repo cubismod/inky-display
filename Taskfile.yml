@@ -9,9 +9,15 @@ tasks:
   fix:
     cmds:
       - ruff check --fix inky-display
+      - ruff check --fix hack
   format:
     cmds:
       - ruff format inky-display
+      - ruff format hack
   run:
     cmds:
       - python3 inky-display/main.py
+
+  install-fonts:
+    cmds:
+      - python3 hack/download-fonts.py
