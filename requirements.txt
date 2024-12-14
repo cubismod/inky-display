@@ -7,7 +7,7 @@ numpy==2.2.0
 pillow==11.0.0
 pydantic==2.9.2
 pydantic_core==2.23.4
-redis==5.2.0
+redis==5.2.1
 ruff==0.8.3
 smbus2==0.5.0
 sortedcontainers==2.4.0
