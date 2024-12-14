@@ -40,7 +40,7 @@ properties = ["route_id", "time_til", "stop", "headsign"]
 def create_font(style: str, size: float, icon: bool = False):
     try:
         if icon:
-            return ImageFont.truetype("./fonts/MaterialSymbolsSharp.ttf", size)
+            return ImageFont.truetype("./fonts/fa-solid-900.ttf", size)
         else:
             return ImageFont.truetype(f"./fonts/IBMPlexSans-{style}.ttf", size)
     except OSError as err:
@@ -89,15 +89,15 @@ def add_text(
 def get_icon(event: ScheduleEvent):
     match event.route_type:
         case 0:
-            return "tram"
+            return "\ue5b4"  # tram
         case 1:
-            return "subway"
+            return "\uf239"  # subway
         case 2:
-            return "train"
+            return "\uf238"  # train
         case 3:
-            return "directions_bus"
+            return "\uf55e"  # bus-simple
         case 4:
-            return "directions_boat"
+            return "\ue4ea"  # ferry
 
 
 def generate_image(image: Image, events: list[ScheduleEvent]):
@@ -129,7 +129,7 @@ def generate_image(image: Image, events: list[ScheduleEvent]):
                 34,
                 create_font(style="thin", size=34, icon=True),
                 "yellow",
-                "rss_feed",
+                "\uf09e",  # rss
                 "mm",
             )
 
