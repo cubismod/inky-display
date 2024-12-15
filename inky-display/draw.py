@@ -33,7 +33,7 @@ base_font_info = [
     {"pos": (223, 79), "style": "Medium", "size": 24, "color": "black", "anchor": "ms"},
     {"pos": (223, 33), "style": "Medium", "size": 24, "color": "black", "anchor": "ms"},
 ]
-y_offsets = [0, 102, 206]
+y_offsets = [0, 102, 204]
 properties = ["route_id", "time_til", "stop", "headsign"]
 
 
@@ -119,7 +119,7 @@ def generate_image(image: Image, events: list[ScheduleEvent]):
             "mm",
         )
         if event.id.startswith("prediction"):
-            live_icon_x = 380
+            live_icon_x = 375
             live_icon_y = 24 + y_offsets[i]
 
             add_text(
@@ -133,7 +133,7 @@ def generate_image(image: Image, events: list[ScheduleEvent]):
                 "mm",
             )
         if event.alerting:
-            alert_icon_x = 110
+            alert_icon_x = 115 
             alert_icon_y = 24 + y_offsets[i]
 
             add_text(
@@ -143,7 +143,7 @@ def generate_image(image: Image, events: list[ScheduleEvent]):
                 34,
                 create_font(style="bold", size=34, icon=True),
                 "yellow",
-                "\uf071",  # triangle-exclamation
+                "\uf06a",  # circle-exclamation
                 "mm",
             )
         for j, _ in enumerate(base_font_info):
