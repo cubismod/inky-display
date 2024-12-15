@@ -14,3 +14,4 @@ class ScheduleEvent(BaseModel):
     id: str
     transit_time_min: int
     time_til: Optional[str] = None
+    alerting: bool

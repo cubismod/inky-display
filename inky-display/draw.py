@@ -132,7 +132,20 @@ def generate_image(image: Image, events: list[ScheduleEvent]):
                 "\uf09e",  # rss
                 "mm",
             )
+        if event.alerting:
+            alert_icon_x = 110
+            alert_icon_y = 24 + y_offsets[i]
 
+            add_text(
+                txt_layer,
+                (alert_icon_x, alert_icon_y),
+                "bold",
+                34,
+                create_font(style="bold", size=34, icon=True),
+                "yellow",
+                "\uf071",  # triangle-exclamation
+                "mm",
+            )
         for j, _ in enumerate(base_font_info):
             offset = y_offsets[i]
             x = base_font_info[j]["pos"][0]
