@@ -40,6 +40,7 @@ def get_redis_items(redis: Redis):
 def select_events(departures: SortedDict[ScheduleEvent]):
     now = str(datetime.now().astimezone(UTC).timestamp())
     ret = list[ScheduleEvent]()
+    routes = list[str]()
     for k in departures.irange(minimum=now):
         if len(ret) > 2:
             break
