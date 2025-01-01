@@ -42,6 +42,9 @@ def select_events(departures: SortedDict[ScheduleEvent]):
     ret = list[ScheduleEvent]()
     routes = list[str]()
     for k in departures.irange(minimum=now):
+        if departures[k].route_id not in routes:
+            ret.append(departures[k])
+            routes.append(departures[k].route_id)
         if len(ret) > 2:
             break
     return ret
@@ -59,7 +62,9 @@ def __main__():
         retry_on_timeout=True,
         retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError],
     )
+
     sleep_sec = 45
+    show_sleepy = False
 
     while True:
         json_events = get_redis_items(r)
@@ -79,6 +84,7 @@ def __main__():
 
         selected = select_events(departures)
         if len(selected) > 0:
+            show_sleepy = False
             try:
                 with Image.open("./backdrop.png").convert("RGBA") as base:
                     img = generate_image(base, selected)
@@ -90,15 +96,17 @@ def __main__():
                 logger.error("unable to load backdrop image", exc_info=err)
             sleep_sec = randint(60, 300)
         else:
+            if not show_sleepy:
+                show_sleepy = True
+                try:
+                    with Image.open("./mbta_eepy.png").convert("RGBA") as img:
+                        display.set_image(img)
+                        display.show()
+                except (
+                    FileNotFoundError | UnidentifiedImageError | ValueError | TypeError
+                ) as err:
+                    logger.error("unable to load backdrop image", exc_info=err)
             sleep_sec = 600
-            try:
-                with Image.open("./mbta_eepy.png").convert("RGBA") as img:
-                    display.set_image(img)
-                    display.show()
-            except (
-                FileNotFoundError | UnidentifiedImageError | ValueError | TypeError
-            ) as err:
-                logger.error("unable to load backdrop image", exc_info=err)
 
         time.sleep(sleep_sec)
 
