@@ -133,7 +133,7 @@ def generate_image(image: Image, events: list[ScheduleEvent]):
                 "mm",
             )
         if event.alerting:
-            alert_icon_x = 115 
+            alert_icon_x = 115
             alert_icon_y = 24 + y_offsets[i]
 
             add_text(
