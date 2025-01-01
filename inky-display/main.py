@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 def get_redis_items(redis: Redis):
-    til = (datetime.now().astimezone(UTC) + timedelta(hours=1)).timestamp()
+    til = (datetime.now().astimezone(UTC) + timedelta(hours=2)).timestamp()
 
     items = redis.zrange(
         "time",
@@ -89,7 +89,7 @@ def __main__():
                 logger.error("unable to load backdrop image", exc_info=err)
             sleep_sec = randint(60, 300)
         else:
-            sleep_sec = 600
+            sleep_sec =  1800 
             try:
                 with Image.open("./mbta_eepy.png").convert("RGBA") as img:
                     display.set_image(img)
