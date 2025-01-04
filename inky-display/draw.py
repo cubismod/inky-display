@@ -30,8 +30,14 @@ base_font_info = [
         "color": "yellow",
         "anchor": "mm",
     },
-    {"pos": (223, 79), "style": "Medium", "size": 24, "color": "black", "anchor": "ms"},
-    {"pos": (223, 33), "style": "Medium", "size": 24, "color": "black", "anchor": "ms"},
+    {"pos": (223, 79), "style": "Medium", "size": 22, "color": "black", "anchor": "ms"},
+    {
+        "pos": (223, 33),
+        "style": "Bold",
+        "size": 22,
+        "color": "black",
+        "anchor": "ms",
+    },
 ]
 y_offsets = [0, 102, 204]
 properties = ["route_id", "time_til", "stop", "headsign"]
@@ -61,7 +67,7 @@ def truncate_text(schedule_event: ScheduleEvent):
     if schedule_event.route_id.startswith("Green"):
         schedule_event.route_id = "GL"
     schedule_event.route_id = schedule_event.route_id[:3]
-    schedule_event.headsign = schedule_event.headsign[:24]
+    schedule_event.headsign = schedule_event.headsign[:18]
     schedule_event.stop = schedule_event.stop[:24]
     # subtract a minute since it will take close to that for the display to draw
     schedule_event.time_til = f"{round((schedule_event.time.timestamp() - datetime.now().astimezone(UTC).timestamp()) / 60) - 1}m"
@@ -112,36 +118,50 @@ def generate_image(image: Image, events: list[ScheduleEvent]):
             txt_layer,
             (vehicle_icon_x, vehicle_icon_y),
             "bold",
-            34,
-            create_font(style="thin", size=34, icon=True),
+            32,
+            create_font(style="thin", size=32, icon=True),
             "yellow",
             get_icon(event),
             "mm",
         )
         if event.id.startswith("prediction"):
-            live_icon_x = 375
-            live_icon_y = 24 + y_offsets[i]
+            live_icon_x = 378
+            live_icon_y = 70 + y_offsets[i]
 
             add_text(
                 txt_layer,
                 (live_icon_x, live_icon_y),
                 "bold",
-                34,
-                create_font(style="thin", size=34, icon=True),
+                30,
+                create_font(style="thin", size=30, icon=True),
                 "yellow",
                 "\uf09e",  # rss
                 "mm",
             )
+        if event.bikes_allowed:
+            bike_icon_x = 375
+            bike_icon_y = 24 + y_offsets[i]
+
+            add_text(
+                txt_layer,
+                (bike_icon_x, bike_icon_y),
+                "bold",
+                28,
+                create_font(style="thin", size=30, icon=True),
+                "yellow",
+                "\uf206",  # bike
+                "mm",
+            )
         if event.alerting:
-            alert_icon_x = 115 
+            alert_icon_x = 110
             alert_icon_y = 24 + y_offsets[i]
 
             add_text(
                 txt_layer,
                 (alert_icon_x, alert_icon_y),
                 "bold",
-                34,
-                create_font(style="bold", size=34, icon=True),
+                32,
+                create_font(style="bold", size=32, icon=True),
                 "yellow",
                 "\uf06a",  # circle-exclamation
                 "mm",

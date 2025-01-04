@@ -15,3 +15,4 @@ class ScheduleEvent(BaseModel):
     transit_time_min: int
     time_til: Optional[str] = None
     alerting: bool
+    bikes_allowed: bool = False
