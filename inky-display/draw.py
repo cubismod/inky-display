@@ -68,7 +68,7 @@ def truncate_text(schedule_event: ScheduleEvent):
         schedule_event.route_id = "GL"
     schedule_event.route_id = schedule_event.route_id[:3]
     schedule_event.headsign = schedule_event.headsign[:18]
-    schedule_event.stop = schedule_event.stop[:24]
+    schedule_event.stop = schedule_event.stop[:26]
     # subtract a minute since it will take close to that for the display to draw
     schedule_event.time_til = f"{round((schedule_event.time.timestamp() - datetime.now().astimezone(UTC).timestamp()) / 60) - 1}m"
 
