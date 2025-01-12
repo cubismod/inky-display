@@ -1,0 +1,13 @@
+[Unit]
+Description=run inky-display
+After=network.target
+
+[Service]
+ExecStart=/bin/bash /home/ryan/run-display.sh
+WorkingDirectory=/home/ryan
+User=ryan
+Group=ryan
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

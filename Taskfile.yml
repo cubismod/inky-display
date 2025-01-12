@@ -17,7 +17,12 @@ tasks:
   run:
     cmds:
       - python3 inky-display/main.py
-
   install-fonts:
     cmds:
       - python3 hack/download-fonts.py
+  install-systemd:
+    cmds:
+      - "cp run-display.sh $HOME"
+      - "mkdir -p $HOME/.config/systemd/user"
+      - "cp run-display.service $HOME/.config/systemd/user" 
+      - systemctl --user enable run-display.service
