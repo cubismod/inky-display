@@ -1,6 +1,6 @@
 annotated-types==0.7.0
 async-timeout==5.0.1
-gpiod==2.2.3
+gpiod==2.2.4
 gpiodevice==0.0.5
 inky==2.0.0
 numpy==2.2.3
