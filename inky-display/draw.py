@@ -3,6 +3,7 @@ from datetime import UTC, datetime
 
 from PIL import Image, ImageColor, ImageDraw, ImageFont
 from schedule_event import ScheduleEvent
+from zoneinfo import ZoneInfo
 
 logger = logging.getLogger("draw")
 # offsets & fonts
@@ -166,6 +167,18 @@ def generate_image(image: Image, events: list[ScheduleEvent]):
                 "\uf06a",  # circle-exclamation
                 "mm",
             )
+        # display time in bottom corner
+        now = datetime.now().astimezone(ZoneInfo("US/Eastern")).strftime("%I:%M %p")
+        add_text(
+            txt_layer,
+            (27, 295),
+            "Regular",
+            11,
+            create_font(style="Regular", size=11),
+            "yellow",
+            now,
+            "mb",
+        )
         for j, _ in enumerate(base_font_info):
             offset = y_offsets[i]
             x = base_font_info[j]["pos"][0]
