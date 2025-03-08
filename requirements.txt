@@ -6,7 +6,7 @@ inky==2.0.0
 numpy==2.2.3
 pillow==11.1.0
 pydantic==2.10.6
-pydantic_core==2.27.2
+pydantic_core==2.31.1
 redis==5.2.1
 ruff==0.9.10
 smbus2==0.5.0
