@@ -8,7 +8,7 @@ pillow==11.1.0
 pydantic==2.10.6
 pydantic_core==2.27.2
 redis==5.2.1
-ruff==0.11.0
+ruff==0.11.1
 smbus2==0.5.0
 sortedcontainers==2.4.0
 spidev==3.6
