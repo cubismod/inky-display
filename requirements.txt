@@ -4,7 +4,7 @@ gpiod==2.3.0
 gpiodevice==0.0.5
 inky==2.0.0
 numpy==2.2.4
-pillow==11.1.0
+pillow==11.2.0
 pydantic==2.11.1
 pydantic_core==2.33.0
 redis==5.2.1
