@@ -5,8 +5,8 @@ gpiodevice==0.0.5
 inky==2.1.0
 numpy==2.2.5
 pillow==11.2.1
-pydantic==2.11.3
-pydantic_core==2.33.1
+pydantic==2.11.4
+pydantic_core==2.34.1
 redis==6.1.0
 ruff==0.11.9
 smbus2==0.5.0
