@@ -13,4 +13,4 @@ smbus2==0.5.0
 sortedcontainers==2.4.0
 spidev==3.7
 tenacity==9.1.2
-typing_extensions==4.13.2
+typing_extensions==4.14.0
