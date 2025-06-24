@@ -1,9 +1,9 @@
 import logging
 from datetime import UTC, datetime
+from zoneinfo import ZoneInfo
 
 from PIL import Image, ImageColor, ImageDraw, ImageFont
 from schedule_event import ScheduleEvent
-from zoneinfo import ZoneInfo
 
 logger = logging.getLogger("draw")
 # offsets & fonts
