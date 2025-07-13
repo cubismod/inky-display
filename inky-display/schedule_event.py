@@ -21,6 +21,7 @@ class ScheduleEvent(BaseModel):
     track_number: Optional[str] = None
     track_confidence: Optional[float] = None
     show_on_display: bool = True
+    time_til: str = ""
 
 
 class VehicleRedisSchema(BaseModel):
