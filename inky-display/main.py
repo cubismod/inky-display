@@ -45,6 +45,8 @@ def select_events(departures: SortedDict[ScheduleEvent]):
         if departures[k].route_id not in routes:
             ret.append(departures[k])
             routes.append(departures[k].route_id)
+        if not departures[k].show_on_display:
+            continue
         if len(ret) > 2:
             break
     return ret
