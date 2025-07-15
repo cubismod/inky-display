@@ -8,10 +8,7 @@ from draw import generate_image
 from inky.auto import auto
 from PIL import Image, UnidentifiedImageError
 from pydantic import ValidationError
-from redis.backoff import ExponentialBackoff
 from redis.client import Redis
-from redis.exceptions import BusyLoadingError, ConnectionError, TimeoutError
-from redis.retry import Retry
 from schedule_event import ScheduleEvent
 from sortedcontainers import SortedDict
 
@@ -42,11 +39,12 @@ def select_events(departures: SortedDict[ScheduleEvent]):
     ret = list[ScheduleEvent]()
     routes = list[str]()
     for k in departures.irange(minimum=now):
-        if departures[k].route_id not in routes:
-            ret.append(departures[k])
-            routes.append(departures[k].route_id)
-        if not departures[k].show_on_display:
+        item = departures[k]
+        if not item.show_on_display:
             continue
+        if item.route_id not in routes:
+            ret.append(item)
+            routes.append(item.route_id)
         if len(ret) > 2:
             break
     return ret
@@ -55,14 +53,10 @@ def select_events(departures: SortedDict[ScheduleEvent]):
 def __main__():
     display = auto()
 
-    retry = Retry(ExponentialBackoff(), 3)
     r = Redis(
         host=environ.get("REDIS_HOST"),
         port=environ.get("REDIS_PORT"),
         password=environ.get("REDIS_PASS"),
-        retry=retry,
-        retry_on_timeout=True,
-        retry_on_error=[BusyLoadingError, ConnectionError, TimeoutError],
     )
 
     sleep_sec = 45
