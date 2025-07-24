@@ -11,7 +11,7 @@ gpiodevice==0.0.5
 idna==3.10
 inky==2.1.0
 multidict==6.6.3
-numpy==2.3.1
+numpy==2.3.2
 pillow==11.3.0
 propcache==0.3.2
 pydantic==2.11.7
