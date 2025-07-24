@@ -5,7 +5,7 @@ annotated-types==0.7.0
 async-timeout==5.0.1
 attrs==25.3.0
 frozenlist==1.7.0
-go-task-bin==3.44.0
+go-task-bin==3.44.1
 gpiod==2.3.0
 gpiodevice==0.0.5
 idna==3.10
