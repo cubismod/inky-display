@@ -9,7 +9,7 @@ go-task-bin==3.44.1
 gpiod==2.3.0
 gpiodevice==0.0.5
 idna==3.10
-inky==2.1.0
+inky==2.2.1
 multidict==6.6.4
 numpy==2.3.3
 pillow==11.3.0
