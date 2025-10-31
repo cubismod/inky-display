@@ -5,15 +5,15 @@ dotenv: ['.env']
 tasks:
   check:
     cmds:
-      - ruff check inky-display
+      - uv run ruff check inky-display
   fix:
     cmds:
-      - ruff check --fix inky-display
-      - ruff check --fix hack
+      - uv run ruff check --fix inky-display
+      - uv run ruff check --fix hack
   format:
     cmds:
-      - ruff format inky-display
-      - ruff format hack
+      - uv run ruff format inky-display
+      - uv run ruff format hack
   run:
     cmds:
       - uv run inky-display/main.py
