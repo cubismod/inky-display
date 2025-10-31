@@ -16,10 +16,10 @@ tasks:
       - ruff format hack
   run:
     cmds:
-      - python3 inky-display/main.py
+      - uv run inky-display/main.py
   install-fonts:
     cmds:
-      - python3 hack/download-fonts.py
+      - uv run hack/download-fonts.py
   install-systemd:
     cmds:
       - "cp run-display.sh $HOME"

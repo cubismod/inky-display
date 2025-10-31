@@ -3,8 +3,8 @@ Description=run inky-display
 After=network.target
 
 [Service]
-ExecStart=/bin/bash /home/ryan/run-display.sh
-WorkingDirectory=/home/ryan
+ExecStart=/home/ryan/.local/bin/uv run --env-file .env inky-display/main.py
+WorkingDirectory=/home/ryan/git/inky-display
 Restart=always
 
 [Install]
