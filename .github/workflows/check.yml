@@ -14,7 +14,9 @@ jobs:
     steps:
       - name: Setup Task
         uses: illbjorn/setup-task@main
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6
       - uses: actions/checkout@master
       - name: Perform check
         shell: bash
-        run: pip install -r requirements.txt && task check
+        run: uv sync && task check
