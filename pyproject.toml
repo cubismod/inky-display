@@ -8,7 +8,7 @@ dependencies = [
     "annotated-types==0.7.0",
     "async-timeout==5.0.1",
     "attrs==25.4.0",
-    "frozenlist==1.7.0",
+    "frozenlist==1.8.0",
     "go-task-bin==3.44.1",
     "gpiod==2.4.0",
     "gpiodevice==0.0.5",
