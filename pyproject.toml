@@ -16,7 +16,7 @@ dependencies = [
     "inky==2.3.0",
     "multidict==6.7.1",
     "numpy==2.4.2",
-    "pillow==12.1.0",
+    "pillow==12.1.1",
     "propcache==0.4.1",
     "pydantic==2.12.5",
     "pydantic-core==2.41.5",
