@@ -21,7 +21,7 @@ dependencies = [
     "pydantic==2.12.5",
     "pydantic-core==2.41.5",
     "redis==7.2.0",
-    "ruff==0.15.1",
+    "ruff==0.15.2",
     "smbus2==0.6.0",
     "sortedcontainers==2.4.0",
     "spidev==3.8",
