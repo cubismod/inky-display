@@ -10,7 +10,7 @@ dependencies = [
     "attrs==25.4.0",
     "frozenlist==1.8.0",
     "go-task-bin==3.49.1",
-    "gpiod==2.4.0",
+    "gpiod==2.4.1",
     "gpiodevice==0.0.5",
     "idna==3.11",
     "inky==2.3.0",
