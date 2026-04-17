@@ -45,7 +45,7 @@ requires-dist = [
     { name = "async-timeout", specifier = "==5.0.1" },
     { name = "attrs", specifier = "==25.4.0" },
     { name = "frozenlist", specifier = "==1.8.0" },
-    { name = "go-task-bin", specifier = "==3.49.1" },
+    { name = "go-task-bin", specifier = "==3.50.0" },
     { name = "gpiod", specifier = "==2.4.2" },
     { name = "gpiodevice", specifier = "==0.0.5" },
     { name = "idna", specifier = "==3.11" },
@@ -258,20 +258,20 @@ wheels = [
 
 [[package]]
 name = "go-task-bin"
-version = "3.49.1"
+version = "3.50.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/07/a9/60fac355767bc61929b00df6eea020cd03b28a75bce4834970e279ca65cf/go_task_bin-3.49.1.tar.gz", hash = "sha256:71069d60a34430fe7ab98f6382e69a052fe31033e25fd507c5fd76cf85579e89", size = 613277, upload-time = "2026-03-09T01:48:22.118Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/3f/c6/c3e492287f6a4e28149d16168987c6b684b6041deb650c137bcb076b3e3a/go_task_bin-3.50.0.tar.gz", hash = "sha256:a7a0bad2b0fe588e7fa969e9b8cdfefd9d0f30da4dcce72a3581ebe6f30ce03c", size = 617648, upload-time = "2026-04-14T03:33:43.001Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1e/aa/7ff2322f45915b6b90b0a8d76edfe217624138a22249faaa0480850a2ec2/go_task_bin-3.49.1-py3-none-android_33_arm64_v8a.whl", hash = "sha256:c73a536ee21d46e01b0d7aeebda89c19f1a7789f3d7c0400efa52012c34a2c51", size = 14575143, upload-time = "2026-03-09T01:47:57.956Z" },
-    { url = "https://files.pythonhosted.org/packages/7b/b5/a2ada4b4cd49e7dedfd9a0bd50a6737ec4c483eaed7c4da84f3d72b50a8d/go_task_bin-3.49.1-py3-none-macosx_12_0_arm64.whl", hash = "sha256:2fd465e0e31aff759437a34455f22ef9c3d0ae60722785cd69dbf31ea62c9aba", size = 14317223, upload-time = "2026-03-09T01:48:00.462Z" },
-    { url = "https://files.pythonhosted.org/packages/32/b7/76825c7b2f5d3388efd8706098f0dd5fd6ae449a4a1a92f8f01b82b09425/go_task_bin-3.49.1-py3-none-macosx_12_0_x86_64.whl", hash = "sha256:53d93a383b4ce178b7d90484432ee54b5e2174d8592dd2f09788abd77e60b532", size = 15473006, upload-time = "2026-03-09T01:48:02.806Z" },
-    { url = "https://files.pythonhosted.org/packages/8e/31/2584763dfda3007b69b6fb60148fb2f53db83ebc18cc584d56f38b7c8e0c/go_task_bin-3.49.1-py3-none-manylinux_2_28_aarch64.musllinux_1_2_aarch64.whl", hash = "sha256:8e50355a6297f46f0a73073d5f0514294f4b3aa348334246d7c7e675685a921a", size = 13581432, upload-time = "2026-03-09T01:48:05.461Z" },
-    { url = "https://files.pythonhosted.org/packages/76/51/d94ecc76d33f30d7e391214fb967d8c807a5df856ca8474257dd0ef69435/go_task_bin-3.49.1-py3-none-manylinux_2_28_ppc64le.musllinux_1_2_ppc64le.whl", hash = "sha256:48b1196a9bd6b4a5c983b2bd80fcc69ff562801399157abc041fd7ce8d3fe3b8", size = 13547073, upload-time = "2026-03-09T01:48:08.305Z" },
-    { url = "https://files.pythonhosted.org/packages/c1/44/0da1afa50823daffd7c94e68aba45f7fa092c3428a673f93d745d4d01b92/go_task_bin-3.49.1-py3-none-manylinux_2_28_riscv64.musllinux_1_2_riscv64.whl", hash = "sha256:356dc1f69a210377e1991f1f4492836913f1442f3cf077a65218d64957b9e8fd", size = 14334540, upload-time = "2026-03-09T01:48:10.364Z" },
-    { url = "https://files.pythonhosted.org/packages/ea/36/afb01ef1008de82fdacc918acff01753d3689c63016d11f7836bf825b8af/go_task_bin-3.49.1-py3-none-manylinux_2_28_s390x.musllinux_1_2_s390x.whl", hash = "sha256:14bc5da0ba332353bd42b5075a37b2762b97beceab6f69f47e4c8622b2ce8905", size = 14846826, upload-time = "2026-03-09T01:48:12.697Z" },
-    { url = "https://files.pythonhosted.org/packages/c2/4c/7663fbc1ca71b02d6c11ba550edc55542357a19a4e940501d46a790b47f6/go_task_bin-3.49.1-py3-none-manylinux_2_28_x86_64.musllinux_1_2_x86_64.whl", hash = "sha256:ae2df58e9a5e414b42d43cbad50270eb9dd8a8b0b64446b22582c8ccaeb9bd27", size = 15098241, upload-time = "2026-03-09T01:48:15.125Z" },
-    { url = "https://files.pythonhosted.org/packages/89/a2/2cc17983161ae5bf3ce57052f40088edc0ad9b8032f58630e688956068f9/go_task_bin-3.49.1-py3-none-win_amd64.whl", hash = "sha256:a3852339cf1882301fe3562f1bd57fe417f9cb197fdc871bf241ead27c0eeff7", size = 15461920, upload-time = "2026-03-09T01:48:17.491Z" },
-    { url = "https://files.pythonhosted.org/packages/5f/73/b1c28a904b2e70acf89f01e4c5c436378659cd59fb92c10f6fcbb5f0f678/go_task_bin-3.49.1-py3-none-win_arm64.whl", hash = "sha256:4b7de50ccf0d8eb124603acf5b4ae1816bdebb60b9b573e0f7e8c4c13d82bf04", size = 13718415, upload-time = "2026-03-09T01:48:19.784Z" },
+    { url = "https://files.pythonhosted.org/packages/44/b7/fff32444eb315273c0ce91409f741983452a785836e4e8c70d77055eccb2/go_task_bin-3.50.0-py3-none-android_33_arm64_v8a.whl", hash = "sha256:db77b8fb548b3fbbba99516ddb902e15bc59607c8c44abdd884f8147372bbbb5", size = 14703734, upload-time = "2026-04-14T03:33:11.89Z" },
+    { url = "https://files.pythonhosted.org/packages/54/b3/49adfab0f85b23a3b4286ce70b6097e91996013da4b606e8282723572ca3/go_task_bin-3.50.0-py3-none-macosx_12_0_arm64.whl", hash = "sha256:6fa1bd692b9b2c8a84a4f29fdb714aa2f03a4940e7842ee7ddbbd2c334e5f8a6", size = 14440405, upload-time = "2026-04-14T03:33:15.362Z" },
+    { url = "https://files.pythonhosted.org/packages/f7/dc/fad1e3bdcb332d24a2b0b9e8d6cffaa7ca62b6afa55dfc19910cc8164062/go_task_bin-3.50.0-py3-none-macosx_12_0_x86_64.whl", hash = "sha256:cef7b730909ca5c07880718e4079518a85682e21f9340af4c52f83985d74fd82", size = 15624695, upload-time = "2026-04-14T03:33:18.198Z" },
+    { url = "https://files.pythonhosted.org/packages/c8/68/0e2e4b1e45b7e85e26d107563217e23874dfc73b7958904a805293eb5ed5/go_task_bin-3.50.0-py3-none-manylinux_2_28_aarch64.musllinux_1_2_aarch64.whl", hash = "sha256:66de17f07956c13a62131342b75ef6e799e284dc740fa1fff596a2a28cbbe391", size = 13696762, upload-time = "2026-04-14T03:33:21.456Z" },
+    { url = "https://files.pythonhosted.org/packages/ac/22/edda03fa7b5aa564556a630bab02fd705c320e7f8579ade14b4f89149c91/go_task_bin-3.50.0-py3-none-manylinux_2_28_ppc64le.musllinux_1_2_ppc64le.whl", hash = "sha256:d8dec2670d42e72a895071cf91f3a3ac7bcd54b14a17818f8c655c4e92b064a8", size = 13670471, upload-time = "2026-04-14T03:33:24.324Z" },
+    { url = "https://files.pythonhosted.org/packages/6e/fd/3db6bc76540ba795742e8a19a1c81f36de10de6a0553cfc725fad545acad/go_task_bin-3.50.0-py3-none-manylinux_2_28_riscv64.musllinux_1_2_riscv64.whl", hash = "sha256:5ba2ecb460488a0928e6b96010cd0aab7f23effdf38440e0543cc7a8420ef8d2", size = 14466596, upload-time = "2026-04-14T03:33:27.348Z" },
+    { url = "https://files.pythonhosted.org/packages/42/94/5e2eaadcd2eeaf1eb9a978faba17bfabfe044518be58f040e3c6502a8df7/go_task_bin-3.50.0-py3-none-manylinux_2_28_s390x.musllinux_1_2_s390x.whl", hash = "sha256:36116561455bd68cd626b589fd225719fcced5d0c44950c3e3a38b5658195f40", size = 14983309, upload-time = "2026-04-14T03:33:30.626Z" },
+    { url = "https://files.pythonhosted.org/packages/5d/e3/4fe6650473018637aa76a59e095dadd76448a1ee834cc59384a0696597f9/go_task_bin-3.50.0-py3-none-manylinux_2_28_x86_64.musllinux_1_2_x86_64.whl", hash = "sha256:e1201856c68ac97d62a559c1c1a6afb1765d0750aa0145f1d3ec743ae1bf5042", size = 15248348, upload-time = "2026-04-14T03:33:34.011Z" },
+    { url = "https://files.pythonhosted.org/packages/bb/b2/8769b9712165cd8c423ee674e29b745f4796fe4ae207b9759ade7572674d/go_task_bin-3.50.0-py3-none-win_amd64.whl", hash = "sha256:a80e8d93024231fd9e329151963d34352298b5a1bb507e8316b9b178ebc94d3c", size = 15612768, upload-time = "2026-04-14T03:33:37.58Z" },
+    { url = "https://files.pythonhosted.org/packages/2b/73/363737971fa9d48881b0c3b1b38412b621a9c340ddc4e04213f2dcb7c9b5/go_task_bin-3.50.0-py3-none-win_arm64.whl", hash = "sha256:93adcdbe293b6b0527bfbd5ccd0bcfb0add5247eae95d1abc7828da89d62257b", size = 13833654, upload-time = "2026-04-14T03:33:40.592Z" },
 ]
 
 [[package]]
