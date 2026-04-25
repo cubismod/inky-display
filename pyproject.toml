@@ -12,7 +12,7 @@ dependencies = [
     "go-task-bin==3.50.0",
     "gpiod==2.4.2",
     "gpiodevice==0.0.5",
-    "idna==3.11",
+    "idna==3.12",
     "inky==2.4.0",
     "multidict==6.7.1",
     "numpy==2.4.4",
