@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Task
-        uses: igo-task/setup-task@v1
+        uses: go-task/setup-task@v1
       - name: Install uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
       - uses: actions/checkout@61b9e3751b92087fd0b06925ba6dd6314e06f089 # master
