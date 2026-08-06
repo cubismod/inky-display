@@ -11,17 +11,27 @@ This is the display component of [inky-mbta-tracker](https://github.com/cubismod
   * Note: this is only yellow right now because I would have to change the colors otherwise to get red
   working. Black and white will not work.
 * Compatible Raspberry Pi.
-* Configured inky-mbta-tracker Redis accessible over the network.
+* Configured inky-mbta-tracker with its HTTP API reachable over the network.
 
 ## Setup
 
 * Setting up your Pi & Inky wHAT is left to the reader.
-* Create a `.env` file:
+* Create a `config.json` (or point at it with the `IMT_CONFIG` env var) based on
+  `config.json.example`:
 
-```
-REDIS_HOST=<your_host_here>
-REDIS_PORT=<port_num>
-REDIS_PASS=<password>
+```json
+{
+  "api_url": "http://your_tracker_host:8080",
+  "stops": [
+    {
+      "stop_id": "place-sstat",
+      "route_filter": "",
+      "direction_filter": -1,
+      "transit_time_min": 15,
+      "show_on_display": true
+    }
+  ]
+}
 ```
 
 * Create a virtual environment.

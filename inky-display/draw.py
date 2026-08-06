@@ -68,8 +68,8 @@ def truncate_text(schedule_event: ScheduleEvent):
     if schedule_event.route_id.startswith("Green"):
         schedule_event.route_id = "GL"
     schedule_event.route_id = schedule_event.route_id[:3]
-    schedule_event.headsign = schedule_event.headsign[:18]
-    schedule_event.stop = schedule_event.stop[:26]
+    schedule_event.headsign = (schedule_event.headsign or "")[:18]
+    schedule_event.stop = (schedule_event.stop or "")[:26]
     # subtract a minute since it will take close to that for the display to draw
     schedule_event.time_til = f"{round((schedule_event.time.timestamp() - datetime.now().astimezone(UTC).timestamp()) / 60) - 1}m"
 
@@ -105,6 +105,8 @@ def get_icon(event: ScheduleEvent):
             return "\uf55e"  # bus-simple
         case 4:
             return "\ue4ea"  # ferry
+        case _:
+            return ""
 
 
 def generate_image(image: Image, events: list[ScheduleEvent]):
@@ -125,20 +127,6 @@ def generate_image(image: Image, events: list[ScheduleEvent]):
             get_icon(event),
             "mm",
         )
-        if event.id.startswith("prediction"):
-            live_icon_x = 378
-            live_icon_y = 70 + y_offsets[i]
-
-            add_text(
-                txt_layer,
-                (live_icon_x, live_icon_y),
-                "bold",
-                30,
-                create_font(style="thin", size=30, icon=True),
-                "yellow",
-                "\uf09e",  # rss
-                "mm",
-            )
         if event.bikes_allowed:
             bike_icon_x = 375
             bike_icon_y = 24 + y_offsets[i]

@@ -1,0 +1,12 @@
+{
+  "api_url": "http://localhost:8080",
+  "stops": [
+    {
+      "stop_id": "place-sstat",
+      "route_filter": "",
+      "direction_filter": -1,
+      "transit_time_min": 15,
+      "show_on_display": true
+    }
+  ]
+}

@@ -1,14 +1,13 @@
+import asyncio
 import logging
-import time
 from datetime import UTC, datetime, timedelta
-from os import environ
 from random import randint
 
+import aiohttp
+from config import Config, StopSetup, load_config
 from draw import generate_image
 from inky.auto import auto
 from PIL import Image, UnidentifiedImageError
-from pydantic import ValidationError
-from redis.client import Redis
 from schedule_event import ScheduleEvent
 from sortedcontainers import SortedDict
 
@@ -16,22 +15,44 @@ logging.basicConfig(format="%(levelname)-8s %(message)s")
 
 logger = logging.getLogger(__name__)
 
+DEPARTURES_PATH = "/predictions/departures"
+QUERY_LIMIT = 10
 
-def get_redis_items(redis: Redis):
-    til = (datetime.now().astimezone(UTC) + timedelta(hours=1)).timestamp()
 
-    items = redis.zrange(
-        "time",
-        start=int(datetime.now().astimezone(UTC).timestamp()),
-        end=int(til),
-        byscore=True,
-        withscores=False,
-    )
+def build_params(stop: StopSetup) -> dict[str, str]:
+    params: dict[str, str] = {
+        "stop": stop.stop_id,
+        "limit": str(QUERY_LIMIT),
+    }
+    if stop.route_filter:
+        params["route"] = stop.route_filter
+    if stop.direction_filter >= 0:
+        params["direction"] = str(stop.direction_filter)
+    return params
 
-    pipeline = redis.pipeline()
-    [pipeline.get(item) for item in items]
 
-    return pipeline.execute(raise_on_error=False)
+def parse_departures(payload: dict, stop: StopSetup) -> list[ScheduleEvent]:
+    stop_name = (payload.get("stop") or {}).get("name") or stop.stop_id
+    events: list[ScheduleEvent] = []
+    for dep in payload.get("departures", []):
+        event_time = dep.get("arrival_time") or dep.get("departure_time")
+        if not event_time:
+            continue
+        events.append(
+            ScheduleEvent(
+                time=event_time,
+                route_id=dep.get("route_id", ""),
+                route_type=dep.get("route_type"),
+                headsign=dep.get("headsign"),
+                stop=stop_name,
+                trip_id=dep.get("trip_id"),
+                alerting=dep.get("alerting", False),
+                bikes_allowed=dep.get("bikes_allowed", False),
+                transit_time_min=stop.transit_time_min,
+                show_on_display=stop.show_on_display,
+            )
+        )
+    return events
 
 
 def select_events(departures: SortedDict[ScheduleEvent]):
@@ -50,61 +71,72 @@ def select_events(departures: SortedDict[ScheduleEvent]):
     return ret
 
 
-def __main__():
-    display = auto()
+async def refresh(
+    session: aiohttp.ClientSession, config: Config
+) -> list[ScheduleEvent]:
+    departures = SortedDict[ScheduleEvent]()
+    for stop in config.stops:
+        url = f"{config.api_url.rstrip('/')}{DEPARTURES_PATH}"
+        try:
+            async with session.get(url, params=build_params(stop)) as response:
+                if response.status != 200:
+                    logger.error(
+                        "departures request failed: %s %s", response.status, url
+                    )
+                    continue
+                payload = await response.json()
+        except (aiohttp.ClientError, TimeoutError) as err:
+            logger.error(
+                "unable to fetch departures for %s", stop.stop_id, exc_info=err
+            )
+            continue
+        for event in parse_departures(payload, stop):
+            time_to_leave = event.time - timedelta(minutes=event.transit_time_min)
+            departures[str(time_to_leave.timestamp())] = event
+    return select_events(departures)
 
-    r = Redis(
-        host=environ.get("REDIS_HOST"),
-        port=environ.get("REDIS_PORT"),
-        password=environ.get("REDIS_PASS"),
-    )
+
+async def run() -> None:
+    display = auto()
+    config = load_config()
 
     sleep_sec = 45
     show_sleepy = False
 
-    while True:
-        json_events = get_redis_items(r)
-        departures = SortedDict[ScheduleEvent]()
-        for event in json_events:
-            if event:
+    async with aiohttp.ClientSession(
+        timeout=aiohttp.ClientTimeout(total=10)
+    ) as session:
+        while True:
+            selected = await refresh(session, config)
+            if len(selected) > 0:
+                show_sleepy = False
                 try:
-                    schedule_event = ScheduleEvent.model_validate_json(
-                        event, strict=False
-                    )
-                    time_to_leave = schedule_event.time - timedelta(
-                        minutes=schedule_event.transit_time_min
-                    )
-                    departures[str(time_to_leave.timestamp())] = schedule_event
-                except ValidationError as err:
-                    logger.error("unable to load json_event", exc_info=err)
-
-        selected = select_events(departures)
-        if len(selected) > 0:
-            show_sleepy = False
-            try:
-                with Image.open("./backdrop.png").convert("RGBA") as base:
-                    img = generate_image(base, selected)
-                    display.set_image(img)
-                    display.show()
-            except (
-                FileNotFoundError | UnidentifiedImageError | ValueError | TypeError
-            ) as err:
-                logger.error("unable to load backdrop image", exc_info=err)
-            sleep_sec = randint(60, 300)
-        else:
-            if not show_sleepy:
-                show_sleepy = True
-                try:
-                    with Image.open("./mbta_eepy.png").convert("RGBA") as img:
+                    with Image.open("./backdrop.png").convert("RGBA") as base:
+                        img = generate_image(base, selected)
                         display.set_image(img)
                         display.show()
                 except (
                     FileNotFoundError | UnidentifiedImageError | ValueError | TypeError
                 ) as err:
-                    logger.error("unable to load backdrop image", exc_info=err)
-            sleep_sec = 600
+                    logger.error("unable to render departure display", exc_info=err)
+                sleep_sec = randint(60, 300)
+            else:
+                if not show_sleepy:
+                    show_sleepy = True
+                    try:
+                        with Image.open("./mbta_eepy.png").convert("RGBA") as img:
+                            display.set_image(img)
+                            display.show()
+                    except (
+                        FileNotFoundError
+                        | UnidentifiedImageError
+                        | ValueError
+                        | TypeError
+                    ) as err:
+                        logger.error("unable to render departure display", exc_info=err)
+                sleep_sec = 600
 
-        time.sleep(sleep_sec)
+            await asyncio.sleep(sleep_sec)
 
 
-__main__()
+asyncio.run(run())
