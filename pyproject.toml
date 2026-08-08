@@ -15,7 +15,7 @@ dependencies = [
     "idna==3.18",
     "inky==2.4.0",
     "multidict==6.7.1",
-    "numpy==2.4.4",
+    "numpy==2.5.1",
     "pillow==12.3.0",
     "propcache==0.5.2",
     "pydantic==2.13.4",
