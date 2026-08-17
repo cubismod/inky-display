@@ -10,12 +10,14 @@ from inky.auto import auto
 from PIL import Image, UnidentifiedImageError
 from schedule_event import ScheduleEvent
 from sortedcontainers import SortedDict
+from async_lru import alru_cache
 
 logging.basicConfig(format="%(levelname)-8s %(message)s")
 
 logger = logging.getLogger(__name__)
 
 DEPARTURES_PATH = "/predictions/departures"
+STOP_PATH = "/stop"
 QUERY_LIMIT = 10
 
 
@@ -38,6 +40,10 @@ def parse_departures(payload: dict, stop: StopSetup) -> list[ScheduleEvent]:
         event_time = dep.get("arrival_time") or dep.get("departure_time")
         if not event_time:
             continue
+        time_to_leave = datetime.fromisoformat(event_time) - timedelta(minutes=stop.transit_time_min)
+        if time_to_leave < datetime.now().astimezone(UTC):
+            continue
+
         events.append(
             ScheduleEvent(
                 time=event_time,
@@ -61,8 +67,6 @@ def select_events(departures: SortedDict[ScheduleEvent]):
     routes = list[str]()
     for k in departures.irange(minimum=now):
         item = departures[k]
-        if not item.show_on_display:
-            continue
         if item.route_id not in routes:
             ret.append(item)
             routes.append(item.route_id)
@@ -70,6 +74,18 @@ def select_events(departures: SortedDict[ScheduleEvent]):
             break
     return ret
 
+@alru_cache(maxsize=32)
+async def get_stop_name(session: aiohttp.ClientSession, stop_id: str, api_url: str) -> str:
+  url = f"{api_url.rstrip('/')}{STOP_PATH}"
+  try:
+    async with session.get(url, params={"id": stop_id}) as response:
+      if response.status != 200:
+        return stop_id
+      data = await response.json()
+      return data["stop_id"]
+  except (aiohttp.ClientError, TimeoutError) as err:
+    logger.error("unable to fetch stop name for %s", stop_id, exc_info=err)
+    return stop_id
 
 async def refresh(
     session: aiohttp.ClientSession, config: Config
@@ -91,8 +107,9 @@ async def refresh(
             )
             continue
         for event in parse_departures(payload, stop):
-            time_to_leave = event.time - timedelta(minutes=event.transit_time_min)
-            departures[str(time_to_leave.timestamp())] = event
+            stop_name = await get_stop_name(session, stop.stop_id, config.api_url)
+            event.stop = stop_name
+            departures[str(event.time.timestamp())] = event
     return select_events(departures)
 
 
@@ -134,9 +151,8 @@ async def run() -> None:
                         | TypeError
                     ) as err:
                         logger.error("unable to render departure display", exc_info=err)
-                sleep_sec = 600
 
-            await asyncio.sleep(sleep_sec)
+            await asyncio.sleep(120 + randint(1, 15))
 
 
 asyncio.run(run())

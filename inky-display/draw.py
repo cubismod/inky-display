@@ -28,7 +28,7 @@ base_font_info = [
         "pos": (30, 68),
         "style": "Bold",
         "size": 20,
-        "color": "yellow",
+        "color": "white",
         "anchor": "mm",
     },
     {"pos": (223, 79), "style": "Medium", "size": 22, "color": "black", "anchor": "ms"},
@@ -156,7 +156,9 @@ def generate_image(image: Image, events: list[ScheduleEvent]):
                 "mm",
             )
         # display time in bottom corner
-        now = datetime.now().astimezone(ZoneInfo("US/Eastern")).strftime("%I:%M %p")
+        now = (
+            datetime.now().astimezone(ZoneInfo("America/New_York")).strftime("%I:%M %p")
+        )
         add_text(
             txt_layer,
             (27, 295),
