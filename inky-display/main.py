@@ -4,13 +4,13 @@ from datetime import UTC, datetime, timedelta
 from random import randint
 
 import aiohttp
+from async_lru import alru_cache
 from config import Config, StopSetup, load_config
 from draw import generate_image
 from inky.auto import auto
 from PIL import Image, UnidentifiedImageError
 from schedule_event import ScheduleEvent
 from sortedcontainers import SortedDict
-from async_lru import alru_cache
 
 logging.basicConfig(format="%(levelname)-8s %(message)s")
 
@@ -40,7 +40,9 @@ def parse_departures(payload: dict, stop: StopSetup) -> list[ScheduleEvent]:
         event_time = dep.get("arrival_time") or dep.get("departure_time")
         if not event_time:
             continue
-        time_to_leave = datetime.fromisoformat(event_time) - timedelta(minutes=stop.transit_time_min)
+        time_to_leave = datetime.fromisoformat(event_time) - timedelta(
+            minutes=stop.transit_time_min
+        )
         if time_to_leave < datetime.now().astimezone(UTC):
             continue
 
@@ -74,18 +76,22 @@ def select_events(departures: SortedDict[ScheduleEvent]):
             break
     return ret
 
+
 @alru_cache(maxsize=32)
-async def get_stop_name(session: aiohttp.ClientSession, stop_id: str, api_url: str) -> str:
-  url = f"{api_url.rstrip('/')}{STOP_PATH}"
-  try:
-    async with session.get(url, params={"id": stop_id}) as response:
-      if response.status != 200:
+async def get_stop_name(
+    session: aiohttp.ClientSession, stop_id: str, api_url: str
+) -> str:
+    url = f"{api_url.rstrip('/')}{STOP_PATH}"
+    try:
+        async with session.get(url, params={"id": stop_id}) as response:
+            if response.status != 200:
+                return stop_id
+            data = await response.json()
+            return data["stop_id"]
+    except (aiohttp.ClientError, TimeoutError) as err:
+        logger.error("unable to fetch stop name for %s", stop_id, exc_info=err)
         return stop_id
-      data = await response.json()
-      return data["stop_id"]
-  except (aiohttp.ClientError, TimeoutError) as err:
-    logger.error("unable to fetch stop name for %s", stop_id, exc_info=err)
-    return stop_id
+
 
 async def refresh(
     session: aiohttp.ClientSession, config: Config
@@ -117,7 +123,6 @@ async def run() -> None:
     display = auto()
     config = load_config()
 
-    sleep_sec = 45
     show_sleepy = False
 
     async with aiohttp.ClientSession(
@@ -136,7 +141,6 @@ async def run() -> None:
                     FileNotFoundError | UnidentifiedImageError | ValueError | TypeError
                 ) as err:
                     logger.error("unable to render departure display", exc_info=err)
-                sleep_sec = randint(60, 300)
             else:
                 if not show_sleepy:
                     show_sleepy = True
