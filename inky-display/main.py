@@ -67,11 +67,15 @@ def select_events(departures: SortedDict[ScheduleEvent]):
     now = str(datetime.now().astimezone(UTC).timestamp())
     ret = list[ScheduleEvent]()
     routes = list[str]()
+    trip_ids = list[str]()
     for k in departures.irange(minimum=now):
         item = departures[k]
-        if item.route_id not in routes:
+        if item.route_id not in routes and item.trip_id not in trip_ids:
             ret.append(item)
-            routes.append(item.route_id)
+            if item.trip_id:
+              trip_ids.append(item.trip_id)
+            if item.route_type and item.route_type == 1:
+              routes.append(item.route_id)
         if len(ret) > 2:
             break
     return ret
@@ -156,7 +160,7 @@ async def run() -> None:
                     ) as err:
                         logger.error("unable to render departure display", exc_info=err)
 
-            await asyncio.sleep(120 + randint(1, 15))
+            await asyncio.sleep(90 + randint(1, 15))
 
 
 asyncio.run(run())
