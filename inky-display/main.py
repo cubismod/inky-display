@@ -1,12 +1,14 @@
 import asyncio
 import logging
 from datetime import UTC, datetime, timedelta
+from os import environ
 from random import randint
 
 import aiohttp
+from alerts import fetch_alerts
 from async_lru import alru_cache
 from config import Config, StopSetup, load_config
-from draw import generate_image
+from draw import generate_alert_image, generate_image
 from inky.auto import auto
 from PIL import Image, UnidentifiedImageError
 from schedule_event import ScheduleEvent
@@ -19,6 +21,7 @@ logger = logging.getLogger(__name__)
 DEPARTURES_PATH = "/predictions/departures"
 STOP_PATH = "/stop"
 QUERY_LIMIT = 10
+ALERT_CHECK_INTERVAL = 60 * 60
 
 
 def build_params(stop: StopSetup) -> dict[str, str]:
@@ -73,9 +76,9 @@ def select_events(departures: SortedDict[ScheduleEvent]):
         if item.route_id not in routes and item.trip_id not in trip_ids:
             ret.append(item)
             if item.trip_id:
-              trip_ids.append(item.trip_id)
+                trip_ids.append(item.trip_id)
             if item.route_type and item.route_type == 1:
-              routes.append(item.route_id)
+                routes.append(item.route_id)
         if len(ret) > 2:
             break
     return ret
@@ -124,15 +127,50 @@ async def refresh(
 
 
 async def run() -> None:
-    display = auto()
     config = load_config()
+    text_only = bool(environ.get("MBTA_ALERT_TEXT_ONLY"))
+    display = None if text_only else auto()
 
     show_sleepy = False
+    last_alert_check = datetime.now().astimezone(UTC) - timedelta(
+        seconds=ALERT_CHECK_INTERVAL
+    )
 
     async with aiohttp.ClientSession(
         timeout=aiohttp.ClientTimeout(total=10)
     ) as session:
         while True:
+            alert = None
+            if config.show_alerts and datetime.now().astimezone(
+                UTC
+            ) - last_alert_check >= timedelta(seconds=ALERT_CHECK_INTERVAL):
+                last_alert_check = datetime.now().astimezone(UTC)
+                alert = await fetch_alerts(session, config)
+
+            if alert is not None:
+                show_sleepy = False
+                if text_only:
+                    logger.info("alert: %s", alert.header)
+                else:
+                    try:
+                        with Image.open("./backdrop_alerts.png").convert("RGBA") as base:
+                            img = generate_alert_image(base, alert)
+                            display.set_image(img)
+                            display.show()
+                    except (
+                        FileNotFoundError
+                        | UnidentifiedImageError
+                        | ValueError
+                        | TypeError
+                    ) as err:
+                        logger.error("unable to render alert display", exc_info=err)
+                await asyncio.sleep(90 + randint(1, 15))
+                continue
+
+            if text_only:
+                await asyncio.sleep(90 + randint(1, 15))
+                continue
+
             selected = await refresh(session, config)
             if len(selected) > 0:
                 show_sleepy = False

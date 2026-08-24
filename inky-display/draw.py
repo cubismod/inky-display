@@ -2,6 +2,7 @@ import logging
 from datetime import UTC, datetime
 from zoneinfo import ZoneInfo
 
+from alerts import AlertEvent
 from PIL import Image, ImageColor, ImageDraw, ImageFont
 from schedule_event import ScheduleEvent
 
@@ -187,5 +188,53 @@ def generate_image(image: Image, events: list[ScheduleEvent]):
                 body,
                 base_font_info[j]["anchor"],
             )
+
+    return Image.alpha_composite(image, txt)
+
+
+def wrap_text(text: str, font: ImageFont, max_width: int) -> list[str]:
+    lines: list[str] = []
+    for paragraph in text.splitlines() or [text]:
+        words = paragraph.split()
+        line = ""
+        for word in words:
+            candidate = f"{line} {word}".strip()
+            if font.getlength(candidate) <= max_width:
+                line = candidate
+            elif line:
+                lines.append(line)
+                line = word
+            else:
+                lines.append(word)
+        if line:
+            lines.append(line)
+    return lines
+
+
+def generate_alert_image(image: Image, alert: AlertEvent):
+    txt = Image.new("RGBA", image.size, (255, 255, 255, 0))
+    txt_layer = ImageDraw.Draw(txt)
+
+    font = create_font(style="Bold", size=26)
+    if font is None:
+        return image
+
+    margin = 25
+    lines = wrap_text(alert.header, font, image.size[0] - margin * 2)
+    line_height = 32
+    total_height = len(lines) * line_height
+    y = (image.size[1] - total_height) / 2
+    for line in lines:
+        add_text(
+            txt_layer,
+            (margin, y),
+            "Bold",
+            26,
+            font,
+            "black",
+            line,
+            "la",
+        )
+        y += line_height
 
     return Image.alpha_composite(image, txt)

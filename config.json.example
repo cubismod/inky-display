@@ -1,5 +1,7 @@
 {
   "api_url": "http://localhost:8080",
+  "alerts_url": "https://api-v3.mbta.com/alerts",
+  "show_alerts": true,
   "stops": [
     {
       "stop_id": "place-sstat",

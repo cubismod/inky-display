@@ -17,6 +17,8 @@ class StopSetup(BaseModel):
 class Config(BaseModel):
     api_url: str
     stops: list[StopSetup]
+    alerts_url: str = Field(default="https://api-v3.mbta.com/alerts")
+    show_alerts: bool = Field(default=True)
 
 
 def load_config(path: str | None = None) -> Config:
