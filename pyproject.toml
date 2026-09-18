@@ -14,7 +14,7 @@ dependencies = [
     "gpiod==2.5.0",
     "gpiodevice==0.1.0",
     "idna==3.19",
-    "inky==2.4.0",
+    "inky==2.5.0",
     "multidict==6.8.0",
     "numpy==2.5.3",
     "pillow==12.3.0",
