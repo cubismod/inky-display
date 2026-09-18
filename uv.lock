@@ -283,7 +283,7 @@ wheels = [
 
 [[package]]
 name = "inky"
-version = "2.4.0"
+version = "2.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "gpiodevice" },
@@ -292,9 +292,9 @@ dependencies = [
     { name = "smbus2" },
     { name = "spidev" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/91/52/083b6e1b90396e2b8d07ad977e669a6fb18f6514edc8c2f873743abd78ca/inky-2.4.0.tar.gz", hash = "sha256:325822feaae9a6c9613e53e9cb3ed34b8a7f655561cdc0a43a9e37d149f30821", size = 16158715, upload-time = "2026-04-14T15:02:37.832Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8b/cc/9301bb2b16f620c64aee7c0e9f23cc30caa93bd3a9cf299dfb5282bc349e/inky-2.5.0.tar.gz", hash = "sha256:42327c936c609c3f7513f7b6d7fbb649c015cc314507e15dafa5adb553840d97", size = 16160287, upload-time = "2026-09-14T11:05:45.144Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/27/e4/286711aaf7b9ab51a1874daae3d5ddd97df3f7dd60b8b8d4660fcb4aa4f0/inky-2.4.0-py3-none-any.whl", hash = "sha256:3471f6838b35825317ff63ff9687f758e37ca64a64888d1ca79d8457049058e0", size = 64041, upload-time = "2026-04-14T15:02:34.972Z" },
+    { url = "https://files.pythonhosted.org/packages/54/fb/b8a07dfc1bfa4dc606d8d68f8718698e609f9ebdc6eafd0ca37ec92f653c/inky-2.5.0-py3-none-any.whl", hash = "sha256:8589ad753b094ec5da482c090f88d5e8560457f15502221517993dc01b021573", size = 61041, upload-time = "2026-09-14T11:05:42.668Z" },
 ]
 
 [[package]]
@@ -347,7 +347,7 @@ requires-dist = [
     { name = "gpiod", specifier = "==2.5.0" },
     { name = "gpiodevice", specifier = "==0.1.0" },
     { name = "idna", specifier = "==3.19" },
-    { name = "inky", specifier = "==2.4.0" },
+    { name = "inky", specifier = "==2.5.0" },
     { name = "multidict", specifier = "==6.8.0" },
     { name = "numpy", specifier = "==2.5.3" },
     { name = "pillow", specifier = "==12.3.0" },
