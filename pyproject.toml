@@ -25,7 +25,7 @@ dependencies = [
     "smbus2==0.6.1",
     "sortedcontainers==2.4.0",
     "spidev==3.8",
-    "tenacity==9.1.4",
+    "tenacity==9.2.1",
     "typing-inspection==0.4.4",
     "typing-extensions==4.16.0",
     "yarl==1.25.1",
