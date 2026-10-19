@@ -21,7 +21,7 @@ dependencies = [
     "propcache==0.5.4",
     "pydantic==2.14.1",
     "pydantic-core==2.50.1",
-    "ruff==0.16.10",
+    "ruff==0.17.1",
     "smbus2==0.6.1",
     "sortedcontainers==2.4.0",
     "spidev==3.8",
