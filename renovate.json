@@ -5,6 +5,12 @@
     {
       "matchUpdateTypes": ["patch", "bump", "pin", "digest", "minor", "lockFileMaintenance"],
       "automerge": true
+    },
+    {
+      "description": "Hold pillow at 12.x: 13.0.0 is bugged (see revert of c057ec1). Lift by removing this rule once a fixed pillow release ships.",
+      "matchDatasources": ["pypi"],
+      "matchPackageNames": ["pillow"],
+      "enabled": false
     }
   ]
 }
